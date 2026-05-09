@@ -1,6 +1,6 @@
 ## Day 1 — 2026-05-09
 
-**Hours worked:** 4
+**Hours worked:** 4.5
 
 **What I did:**  
 Initialized the Next.js application with TypeScript, Tailwind CSS, and shadcn/ui. Created the initial project architecture, folder structure, engineering documentation files, and environment setup. Configured GitHub repository, established commit workflow using conventional commits, and deployed the project to Vercel with automatic production deployments.
