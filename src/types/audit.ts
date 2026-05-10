@@ -29,7 +29,7 @@ export interface AuditFormData {
 }
 
 export interface AuditRecommendation {
-  tool: ToolName;
+  tool: string;
   currentSpend: number;
   recommendedAction: string;
   estimatedSavings: number;
