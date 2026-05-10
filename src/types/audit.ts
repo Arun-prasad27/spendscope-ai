@@ -16,7 +16,7 @@ export type UseCase =
   | "mixed";
 
 export interface ToolSpendInput {
-  tool: ToolName;
+  tool: string;
   plan: string;
   monthlySpend: number;
   seats: number;

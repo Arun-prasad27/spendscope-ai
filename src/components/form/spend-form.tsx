@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form"; 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,12 +13,17 @@ export default function SpendForm() {
   const {
     register,
     handleSubmit,
+    reset, // For resetting form with stored data
     formState: { errors },
   } = useForm<AuditFormSchema>({ 
     resolver: zodResolver(auditFormSchema),
 
     defaultValues: formData,
   }); 
+
+  useEffect(() => { // Sync form with store data on mount and when store data changes
+    reset(formData); // Reset form with current store data
+  }, [formData, reset]); 
 
 
   const onSubmit = (data: AuditFormSchema) => {
