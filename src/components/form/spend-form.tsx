@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"; 
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { auditFormSchema, AuditFormSchema } from "@/lib/validations";
 import { useAuditStore } from "@/store/audit-store";
 import { generateAudit } from "@/lib/audit-engine";
+import AuditResults from "@/components/results/audit-results";
+import { AuditRecommendation } from "@/types/audit";
 
 export default function SpendForm() {
   const { formData, setFormData } = useAuditStore();
+  const [results, setResults] = useState<AuditRecommendation[]>([]); 
 
   const {
     register,
@@ -30,6 +33,7 @@ export default function SpendForm() {
   const onSubmit = (data: AuditFormSchema) => {
     setFormData(data);
     const auditResults = generateAudit(data);
+    setResults(auditResults);
     console.log("Audit Data:", data);
     console.log("Audit Results:", auditResults);
   };
@@ -126,6 +130,9 @@ export default function SpendForm() {
           Generate Audit
         </button>
       </form>
+      {results.length > 0 && (
+        <AuditResults results={results} />
+      )}
     </div>
   );
 }
