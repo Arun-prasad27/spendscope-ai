@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { auditFormSchema, AuditFormSchema } from "@/lib/validations";
 import { useAuditStore } from "@/store/audit-store";
+import { generateAudit } from "@/lib/audit-engine";
 
 export default function SpendForm() {
   const { formData, setFormData } = useAuditStore();
@@ -28,8 +29,9 @@ export default function SpendForm() {
 
   const onSubmit = (data: AuditFormSchema) => {
     setFormData(data);
+    const auditResults = generateAudit(data);
     console.log("Audit Data:", data);
-    
+    console.log("Audit Results:", auditResults);
   };
 
   return (
