@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"; 
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { auditFormSchema, AuditFormSchema } from "@/lib/validations";
@@ -13,7 +12,6 @@ export default function SpendForm() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<AuditFormSchema>({ 
     resolver: zodResolver(auditFormSchema),
@@ -21,14 +19,11 @@ export default function SpendForm() {
     defaultValues: formData,
   }); 
 
-  const watchedValues = watch();
-
-  useEffect(() => {
-    setFormData(watchedValues);
-  }, [watchedValues, setFormData]);
 
   const onSubmit = (data: AuditFormSchema) => {
+    setFormData(data);
     console.log("Audit Data:", data);
+    
   };
 
   return (
