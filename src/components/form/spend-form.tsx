@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form"; 
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { auditFormSchema, AuditFormSchema } from "@/lib/validations";
@@ -12,23 +12,44 @@ import { AuditRecommendation } from "@/types/audit";
 
 export default function SpendForm() {
   const { formData, setFormData } = useAuditStore();
-  const [results, setResults] = useState<AuditRecommendation[]>([]); 
+  const [results, setResults] = useState<AuditRecommendation[]>([]);
 
   const {
+    control, // For useFieldArray
     register,
     handleSubmit,
     reset, // For resetting form with stored data
     formState: { errors },
-  } = useForm<AuditFormSchema>({ 
+  } = useForm<AuditFormSchema>({
     resolver: zodResolver(auditFormSchema),
 
-    defaultValues: formData,
-  }); 
+    defaultValues: {
+  ...formData,
 
-  useEffect(() => { // Sync form with store data on mount and when store data changes
+  tools:
+    formData.tools?.length > 0
+      ? formData.tools
+      : [
+          {
+            tool: "ChatGPT",
+            plan: "",
+            monthlySpend: 0,
+            seats: 1,
+          },
+        ],
+},
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    // For dynamic tool entries
+    control,
+    name: "tools",
+  });
+
+  useEffect(() => {
+    // Sync form with store data on mount and when store data changes
     reset(formData); // Reset form with current store data
-  }, [formData, reset]); 
-
+  }, [formData, reset]);
 
   const onSubmit = (data: AuditFormSchema) => {
     setFormData(data);
@@ -98,19 +119,91 @@ export default function SpendForm() {
           />
         </div>
 
-        <div>
-          <label className="mb-2 block font-medium">Tool</label>
+        <div className="space-y-6">
+          {fields.map((field, index) => (
+            <div key={field.id} className="rounded-xl border p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-semibold">Tool {index + 1}</h3>
 
-          <select
-            {...register("tools.0.tool")}
-            className="w-full rounded-md border p-3"
+                {fields.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="text-sm text-red-500"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block">Tool</label>
+
+                  <select
+                    {...register(`tools.${index}.tool`)}
+                    className="w-full rounded-md border p-3"
+                  >
+                    <option value="ChatGPT">ChatGPT</option>
+
+                    <option value="Claude">Claude</option>
+
+                    <option value="Cursor">Cursor</option>
+
+                    <option value="Copilot">GitHub Copilot</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block">Plan</label>
+
+                  <input
+                    {...register(`tools.${index}.plan`)}
+                    className="w-full rounded-md border p-3"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block">Monthly Spend</label>
+
+                  <input
+                    type="number"
+                    {...register(`tools.${index}.monthlySpend`, {
+                      valueAsNumber: true,
+                    })}
+                    className="w-full rounded-md border p-3"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block">Seats</label>
+
+                  <input
+                    type="number"
+                    {...register(`tools.${index}.seats`, {
+                      valueAsNumber: true,
+                    })}
+                    className="w-full rounded-md border p-3"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={() =>
+              append({
+                tool: "ChatGPT",
+                plan: "",
+                monthlySpend: 0,
+                seats: 1,
+              })
+            }
+            className="rounded-md border px-4 py-2"
           >
-            <option value="">Select Tool</option>
-            <option value="Cursor">Cursor</option>
-            <option value="ChatGPT">ChatGPT</option>
-            <option value="Claude">Claude</option>
-            <option value="GitHub Copilot">GitHub Copilot</option>
-          </select>
+            + Add Another Tool
+          </button>
         </div>
 
         <div>
@@ -130,9 +223,7 @@ export default function SpendForm() {
           Generate Audit
         </button>
       </form>
-      {results.length > 0 && (
-        <AuditResults results={results} />
-      )}
+      {results.length > 0 && <AuditResults results={results} />}
     </div>
   );
 }
