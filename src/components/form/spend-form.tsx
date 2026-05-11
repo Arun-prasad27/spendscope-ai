@@ -9,6 +9,8 @@ import { useAuditStore } from "@/store/audit-store";
 import { generateAudit } from "@/lib/audit-engine";
 import AuditResults from "@/components/results/audit-results";
 import { AuditRecommendation } from "@/types/audit";
+import { TOOL_PRICING } from "@/lib/pricing-data";
+import { Label } from "@/components/ui/label";
 
 export default function SpendForm() {
   const { formData, setFormData } = useAuditStore();
@@ -19,25 +21,26 @@ export default function SpendForm() {
     register,
     handleSubmit,
     reset, // For resetting form with stored data
+    watch, // For watching tool selection to update plans
     formState: { errors },
   } = useForm<AuditFormSchema>({
     resolver: zodResolver(auditFormSchema),
 
     defaultValues: {
-  ...formData,
+      ...formData,
 
-  tools:
-    formData.tools?.length > 0
-      ? formData.tools
-      : [
-          {
-            tool: "ChatGPT",
-            plan: "",
-            monthlySpend: 0,
-            seats: 1,
-          },
-        ],
-},
+      tools:
+        formData.tools?.length > 0
+          ? formData.tools
+          : [
+              {
+                tool: "ChatGPT",
+                plan: "",
+                monthlySpend: 0,
+                seats: 1,
+              },
+            ],
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -130,13 +133,23 @@ export default function SpendForm() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="mb-2 block">Plan</label>
+                <div className="space-y-2">
+                  <Label>Plan</Label>
 
-                  <input
-                    {...register(`tools.${index}.plan`)}
+                  <select
                     className="w-full rounded-md border p-3"
-                  />
+                    {...register(`tools.${index}.plan`)}
+                  >
+                    <option value="">Select a plan</option>
+
+                    {TOOL_PRICING[
+                      watch(`tools.${index}.tool`) as keyof typeof TOOL_PRICING 
+                    ]?.plans.map((plan) => (
+                      <option key={plan} value={plan}>
+                        {plan}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
