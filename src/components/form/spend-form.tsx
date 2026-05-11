@@ -95,30 +95,6 @@ export default function SpendForm() {
           </select>
         </div>
 
-        <div>
-          <label className="mb-2 block font-medium">Monthly Spend</label>
-
-          <input
-            type="number"
-            {...register("tools.0.monthlySpend", {
-              valueAsNumber: true,
-            })}
-            className="w-full rounded-md border p-3"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block font-medium">Seats</label>
-
-          <input
-            type="number"
-            {...register("tools.0.seats", {
-              valueAsNumber: true,
-            })}
-            className="w-full rounded-md border p-3"
-          />
-        </div>
-
         <div className="space-y-6">
           {fields.map((field, index) => (
             <div key={field.id} className="rounded-xl border p-4">
@@ -204,16 +180,6 @@ export default function SpendForm() {
           >
             + Add Another Tool
           </button>
-        </div>
-
-        <div>
-          <label className="mb-2 block font-medium">Plan</label>
-
-          <input
-            type="text"
-            {...register("tools.0.plan")}
-            className="w-full rounded-md border p-3"
-          />
         </div>
 
         <button
