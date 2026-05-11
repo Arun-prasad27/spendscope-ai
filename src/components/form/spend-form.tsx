@@ -129,7 +129,7 @@ export default function SpendForm() {
 
                     <option value="Cursor">Cursor</option>
 
-                    <option value="Copilot">GitHub Copilot</option>
+                    <option value="GitHub Copilot">GitHub Copilot</option>
                   </select>
                 </div>
 
