@@ -1,10 +1,12 @@
 import { AuditRecommendation } from "@/types/audit";
+import { LeadCaptureForm } from "./lead-capture-form";
 
 interface AuditResultsProps {
   results: AuditRecommendation[];
+  teamSize: number;
 }
 
-export default function AuditResults({ results }: AuditResultsProps) {
+export default function AuditResults({ results, teamSize }: AuditResultsProps) {
   const totalMonthlySavings = results.reduce(
     (sum, item) => sum + item.estimatedSavings,
     0,
@@ -44,6 +46,10 @@ export default function AuditResults({ results }: AuditResultsProps) {
             </div>
           </div>
         ))}
+        <LeadCaptureForm
+          estimatedSavings={totalMonthlySavings}
+          teamSize={teamSize}
+        />
       </div>
     </div>
   );

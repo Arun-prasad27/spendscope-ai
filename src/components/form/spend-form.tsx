@@ -202,7 +202,7 @@ export default function SpendForm() {
           Generate Audit
         </button>
       </form>
-      {results.length > 0 && <AuditResults results={results} />}
+      {results.length > 0 && <AuditResults results={results} teamSize={formData.teamSize} />}
     </div>
   );
 }
