@@ -1,5 +1,6 @@
 import { AuditRecommendation } from "@/types/audit";
 import { LeadCaptureForm } from "./lead-capture-form";
+import { useEffect, useState } from "react";
 
 interface AuditResultsProps {
   results: AuditRecommendation[];
@@ -14,6 +15,42 @@ export default function AuditResults({ results, teamSize }: AuditResultsProps) {
 
   const annualSavings = totalMonthlySavings * 12;
 
+  const [summary, setSummary] = useState("");
+  const [loadingSummary, setLoadingSummary] = useState(true);
+
+  useEffect(() => {
+    async function generateSummary() {
+      try {
+        const response = await fetch("/api/generate-summary", {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            results,
+            totalSavings: totalMonthlySavings,
+          }),
+        });
+
+        const data = await response.json();
+
+        setSummary(data.summary);
+      } catch (error) {
+        console.error(error);
+
+        setSummary(
+          "We identified several opportunities to optimize your AI infrastructure spending while maintaining team productivity.",
+        );
+      } finally {
+        setLoadingSummary(false);
+      }
+    }
+
+    generateSummary();
+  }, [results, totalMonthlySavings]);
+
   return (
     <div className="mt-10 space-y-6">
       <div className="rounded-2xl border bg-black p-8 text-white">
@@ -24,6 +61,14 @@ export default function AuditResults({ results, teamSize }: AuditResultsProps) {
 
           <p className="mt-2 text-lg text-gray-300">${annualSavings}/year</p>
         </div>
+      </div>
+
+      <div className="rounded-xl border p-6">
+        <h3 className="text-xl font-semibold">AI Audit Summary</h3>
+
+        <p className="mt-3 text-gray-600">
+          {loadingSummary ? "Generating personalized summary..." : summary}
+        </p>
       </div>
 
       <div className="space-y-4">
