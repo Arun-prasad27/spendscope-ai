@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 type Props = {
   estimatedSavings: number;
   teamSize: number;
 };
 
-export function LeadCaptureForm({
-  estimatedSavings,
-  teamSize,
-}: Props) {
+export function LeadCaptureForm({ estimatedSavings, teamSize }: Props) {
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [role, setRole] = useState("");
@@ -19,28 +15,30 @@ export function LeadCaptureForm({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setLoading(true);
 
-    const { error } = await supabase
-      .from("leads")
-      .insert([
-        {
-          email,
-          company_name: companyName,
-          role,
-          team_size: teamSize,
-          estimated_savings: estimatedSavings,
-        },
-      ]);
+    const response = await fetch("/api/save-lead", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        email,
+        companyName,
+        role,
+        teamSize,
+        estimatedSavings,
+      }),
+    });
 
     setLoading(false);
 
-    if (!error) {
+    if (response.ok) {
       setSuccess(true);
 
       setEmail("");
@@ -48,16 +46,13 @@ export function LeadCaptureForm({
       setRole("");
     } else {
       alert("Something went wrong.");
-      console.error(error);
     }
   }
 
   if (success) {
     return (
       <div className="rounded-lg border p-6">
-        <h3 className="text-xl font-semibold">
-          Audit saved successfully
-        </h3>
+        <h3 className="text-xl font-semibold">Audit saved successfully</h3>
 
         <p className="mt-2 text-sm text-muted-foreground">
           We’ll notify you about future AI cost optimizations.
@@ -67,14 +62,9 @@ export function LeadCaptureForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 rounded-lg border p-6"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border p-6">
       <div>
-        <label className="mb-2 block text-sm font-medium">
-          Email
-        </label>
+        <label className="mb-2 block text-sm font-medium">Email</label>
 
         <input
           type="email"
