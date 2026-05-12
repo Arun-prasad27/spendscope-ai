@@ -1,6 +1,7 @@
 import { AuditRecommendation } from "@/types/audit";
 import { LeadCaptureForm } from "./lead-capture-form";
 import { useEffect, useState } from "react";
+import supabase from "@/lib/supabase/client";
 
 interface AuditResultsProps {
   results: AuditRecommendation[];
@@ -17,7 +18,32 @@ export default function AuditResults({ results, teamSize }: AuditResultsProps) {
 
   const [summary, setSummary] = useState("");
   const [loadingSummary, setLoadingSummary] = useState(true);
+  const [shareUrl, setShareUrl] = useState("");
 
+  // Save the audit results to Supabase and generate a shareable URL
+  useEffect(() => {
+    async function savePublicAudit() {
+      const { data, error } = await supabase
+        .from("public_audits")
+        .insert({
+          audit_data: results,
+          total_monthly_savings: totalMonthlySavings,
+          total_annual_savings: annualSavings,
+        })
+        .select()
+        .single();
+
+      if (!error && data) {
+        setShareUrl(`${window.location.origin}/audit/${data.id}`);
+      }
+    }
+
+    if (results.length > 0) {
+      savePublicAudit();
+    }
+  }, [results, totalMonthlySavings, annualSavings]);
+
+  // Generate a personalized summary using the API route
   useEffect(() => {
     async function generateSummary() {
       try {
@@ -91,6 +117,29 @@ export default function AuditResults({ results, teamSize }: AuditResultsProps) {
             </div>
           </div>
         ))}
+
+        {shareUrl && (
+          <div className="rounded-xl border p-6">
+            <h3 className="text-xl font-semibold">Share This Audit</h3>
+
+            <div className="mt-4 flex gap-2">
+              <input
+                value={shareUrl}
+                readOnly
+                className="w-full rounded-lg border px-4 py-2"
+              />
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(shareUrl);
+                }}
+                className="rounded-lg bg-black px-4 py-2 text-white"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
         <LeadCaptureForm
           estimatedSavings={totalMonthlySavings}
           teamSize={teamSize}
