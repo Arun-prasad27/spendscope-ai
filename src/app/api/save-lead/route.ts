@@ -7,13 +7,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const {
-      email,
-      companyName,
-      role,
-      teamSize,
-      estimatedSavings,
-    } = body;
+    const { email, companyName, role, teamSize, estimatedSavings, website } =
+      body;
+
+    if (website) {
+      return NextResponse.json(
+        {
+          error: "Spam detected",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
 
     const { error } = await supabase.from("leads").insert({
       email,
@@ -30,7 +36,7 @@ export async function POST(req: Request) {
         },
         {
           status: 500,
-        }
+        },
       );
     }
 
@@ -64,7 +70,7 @@ export async function POST(req: Request) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

@@ -14,6 +14,7 @@ export function LeadCaptureForm({ estimatedSavings, teamSize }: Props) {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [website, setWebsite] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,6 +34,7 @@ export function LeadCaptureForm({ estimatedSavings, teamSize }: Props) {
         role,
         teamSize,
         estimatedSavings,
+        website,
       }),
     });
 
@@ -104,6 +106,15 @@ export function LeadCaptureForm({ estimatedSavings, teamSize }: Props) {
         />
       </div>
 
+      <div className="hidden">
+        <label>Website</label>
+
+        <input
+          type="text"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
       <button
         type="submit"
         disabled={loading}
