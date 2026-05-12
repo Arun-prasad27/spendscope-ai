@@ -62,6 +62,8 @@ export default function SpendForm() {
     console.log("Audit Results:", auditResults);
   };
 
+  const selectedTools = fields.map((_, index) => watch(`tools.${index}.tool`));
+
   return (
     <div className="rounded-xl border p-6 shadow-sm">
       <h2 className="mb-6 text-2xl font-bold">AI Spend Audit</h2>
@@ -143,7 +145,7 @@ export default function SpendForm() {
                     <option value="">Select a plan</option>
 
                     {TOOL_PRICING[
-                      watch(`tools.${index}.tool`) as keyof typeof TOOL_PRICING 
+                      selectedTools[index] as keyof typeof TOOL_PRICING
                     ]?.plans.map((plan) => (
                       <option key={plan} value={plan}>
                         {plan}
@@ -202,7 +204,9 @@ export default function SpendForm() {
           Generate Audit
         </button>
       </form>
-      {results.length > 0 && <AuditResults results={results} teamSize={formData.teamSize} />}
+      {results.length > 0 && (
+        <AuditResults results={results} teamSize={formData.teamSize} />
+      )}
     </div>
   );
 }
