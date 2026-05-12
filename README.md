@@ -12,11 +12,11 @@ Deployed URL: [https://spendscope-ai-ebon.vercel.app/]
 
 ### Landing + Spend Input Form
 
-![Homepage](./public/screenshots/homepage.png)
+![Homepage](./public/screenshots/homepage.png.png)
 
 ### Audit Results Dashboard
 
-![Audit Results](./public/screenshots/results.png)
+![Audit Results](./public/screenshots/results.png.png)
 
 ### Shareable Public Audit URL
 
