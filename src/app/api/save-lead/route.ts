@@ -12,6 +12,7 @@ export async function POST(req: Request) {
       companyName,
       role,
       teamSize,
+      estimatedSavings,
     } = body;
 
     const { error } = await supabase.from("leads").insert({
@@ -19,6 +20,7 @@ export async function POST(req: Request) {
       company_name: companyName,
       role,
       team_size: teamSize,
+      estimated_savings: estimatedSavings,
     });
 
     if (error) {
